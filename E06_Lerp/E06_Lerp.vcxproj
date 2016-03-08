@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F5D6D2E1-6FFD-402B-8EE3-DED4FE407028}</ProjectGuid>
-    <RootNamespace>00_Sandbox</RootNamespace>
-    <ProjectName>00_Sandbox</ProjectName>
+    <ProjectGuid>{754DE42C-D9FD-4A79-B325-252C5C0E49AF}</ProjectGuid>
+    <RootNamespace>E06_Lerp</RootNamespace>
+    <ProjectName>E06_Lerp</ProjectName>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
