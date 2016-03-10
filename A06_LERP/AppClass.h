@@ -13,6 +13,13 @@ using namespace ReEng; //Using ReEng namespace to use all the classes in the dll
 class AppClass : public ReEngAppClass
 {
 	float fDuration = 1.0f; //Time Duration of the stops
+	vector3 locations[11];
+
+	//variables to count number of spheres
+	int m_nObjects;
+	PrimitiveClass* m_pSphere;
+	matrix4* m_pMatrix = nullptr;
+
 public:
 	typedef ReEngAppClass super;
 	/*

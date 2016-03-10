@@ -1,7 +1,7 @@
 #include "AppClass.h"
 void AppClass::InitWindow(String a_sWindowName)
 {
-	super::InitWindow("Assignment  06 - LERP"); // Window Name
+	super::InitWindow("Assignment 06 - LERP"); // Window Name
 }
 
 void AppClass::InitVariables(void)
@@ -14,11 +14,52 @@ void AppClass::InitVariables(void)
 	m_pMeshMngr->LoadModel("Sorted\\WallEye.bto", "WallEye");
 
 	fDuration = 1.0f;
+
+	//define locations walleye should move to
+	locations[0] = vector3(-4.0f, -2.0f, 5.0f);
+	locations[1] = vector3(1.0f, -2.0f, 5.0f);
+	locations[2] = vector3(-3.0f, -1.0f, 3.0f);
+	locations[3] = vector3(2.0f, -1.0f, 3.0f);
+	locations[4] = vector3(-2.0f, 0.0f, 0.0f);
+	locations[5] = vector3(3.0f, 0.0f, 0.0f);
+	locations[6] = vector3(-1.0f, 1.0f, -3.0f);
+	locations[7] = vector3(4.0f, 1.0f, -3.0f);
+	locations[8] = vector3(0.0f, 2.0f, -5.0f);
+	locations[9] = vector3(5.0f, 2.0f, -5.0f);
+	locations[10] = vector3(1.0f, 3.0f, -5.0f);
+
+	//code for generating spheres - same as in E06
+	m_nObjects = 11;
+
+	m_pSphere = new PrimitiveClass[m_nObjects];
+	m_pMatrix = new matrix4[m_nObjects];
+
+	vector3 v3Start;
+	vector3 v3End;
+
+	for (int i = 0; i < 11; i++)
+	{
+		if (i != 11)
+		{
+			v3Start = locations[i];
+			v3End = locations[i + 1];
+		}
+		else
+		{
+			v3Start = locations[i];
+			v3End = locations[0];
+		}
+
+		m_pSphere[i].GenerateSphere(0.1f, 5, RERED);
+		vector3 v3Current = glm::lerp(v3Start, v3End, 1.0f);
+		m_pMatrix[i] = glm::translate(v3Current);
+	}
+	
 }
 
 void AppClass::Update(void)
 {
-#pragma region Does not change anything here
+#pragma region Do not change anything here
 	//Update the system's time
 	m_pSystem->UpdateTime();
 
@@ -36,7 +77,45 @@ void AppClass::Update(void)
 #pragma endregion
 
 #pragma region Your Code goes here
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "WallEye");
+	//start point and end point
+	vector3 v3Start;
+	vector3 v3End;
+
+	//loop through locations
+	for (int i = 0; i < 11; i++)
+	{
+		//adjust start and end points to each location
+		if (i != 11)
+		{
+			v3Start = locations[i];
+			v3End = locations[i + 1];
+		}
+		else
+		{
+			v3Start = locations[i];
+			v3End = locations[0];
+		}
+
+		//set the model
+		m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "WallEye");
+
+		//adjust fPercent
+		float fPercent = MapValue(
+			static_cast<float>(i),			//value to change
+			0.0f,							//original min
+			10.0f,							//original max
+			0.0f,							//new min
+			static_cast<float>(fRunTime)	//new max - based on time?
+			);
+
+		//lerp the v3Current vector
+		vector3 v3Current = glm::lerp(v3Start, v3End, fPercent);
+
+		//translate the model
+		IDENTITY_M4 = glm::translate(v3Current);
+	}
+
+
 #pragma endregion
 
 #pragma region Does not need changes but feel free to change anything here
@@ -74,6 +153,14 @@ void AppClass::Display(void)
 		m_pMeshMngr->AddGridToQueue(1.0f, REAXIS::XY, REBLUE * 0.75f); //renders the XY grid with a 100% scale
 		break;
 	}
+
+	matrix4 mProjection = m_pCameraMngr->GetProjectionMatrix();
+	matrix4 mView = m_pCameraMngr->GetViewMatrix();
+
+	for (uint i = 0; i < m_nObjects; i++)
+	{
+		m_pSphere[i].Render(mProjection, mView, m_pMatrix[i]);
+	}
 	
 	m_pMeshMngr->Render(); //renders the render list
 
@@ -82,5 +169,17 @@ void AppClass::Display(void)
 
 void AppClass::Release(void)
 {
+	if (m_pSphere != nullptr)
+	{
+		delete[] m_pSphere; //new[]->delete[], new()->delete
+		m_pSphere = nullptr;
+	}
+
+	if (m_pMatrix != nullptr)
+	{
+		delete[] m_pMatrix; //new[]->delete[], new()->delete
+		m_pMatrix = nullptr;
+	}
+
 	super::Release(); //release the memory of the inherited fields
 }
