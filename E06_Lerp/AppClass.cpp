@@ -11,7 +11,9 @@ void AppClass::InitWindow(String a_sWindowName)
 
 void AppClass::InitVariables(void)
 {
+	//Reset the selection to -1, -1
 	m_selection = std::pair<int, int>(-1, -1);
+<<<<<<< HEAD:E06_Lerp/AppClass.cpp
 	//Set the camera at a position other than the default
 	m_pCameraMngr->SetPositionTargetAndView(
 		vector3(0.0f, 2.5f, 12.0f),
@@ -43,6 +45,15 @@ void AppClass::InitVariables(void)
 		m_pMatrix[i] = glm::translate(v3Current);
 	}
 
+=======
+	//Set the camera position
+	m_pCameraMngr->SetPositionTargetAndView(
+		vector3(0.0f, 2.5f, 15.0f),//Camera position
+		vector3(0.0f, 2.5f, 0.0f),//What Im looking at
+		REAXISY);//What is up
+	//Load a model onto the Mesh manager
+	m_pMeshMngr->LoadModel("Lego\\Unikitty.bto", "Unikitty");
+>>>>>>> 1ff633c8d38024521334e915ae750d4f7d39581f:00_Sandbox/AppClass.cpp
 }
 
 void AppClass::Update(void)
@@ -59,7 +70,9 @@ void AppClass::Update(void)
 
 	//Call the arcball method
 	ArcBall();
-	m_pMeshMngr->SetModelMatrix(glm::translate(m_v3Position) * ToMatrix4(m_qArcBall), 0);
+	
+	//Set the model matrix for the first model to be the arcball
+	m_pMeshMngr->SetModelMatrix(ToMatrix4(m_qArcBall), 0);
 	
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
