@@ -1,7 +1,7 @@
 #include "AppClass.h"
 void AppClass::InitWindow(String a_sWindowName)
 {
-	super::InitWindow("LERP"); // Window Name
+	super::InitWindow("L.A. Stapleford - Midterm ICE"); // Window Name
 
 	// Set the clear color based on Microsoft's CornflowerBlue (default in XNA)
 	//if this line is in Init Application it will depend on the .cfg file, if it
@@ -18,6 +18,9 @@ void AppClass::InitVariables(void)
 		
 	//Load a model onto the Mesh manager
 	m_pMeshMngr->LoadModel("Minecraft\\Steve.obj", "Steve");
+
+	//duration of rotation
+	fDuration = 10.0f;
 }
 
 void AppClass::Update(void)
@@ -42,21 +45,64 @@ void AppClass::Update(void)
 	static double fRunTime = 0.0f;
 	fRunTime += fTimeSpan;
 
+	//units Steve moves
+	static int units = 0;
+
 	matrix4 mOrientation = glm::rotate(IDENTITY_M4, m_v3Rotation.x, vector3(1.0f, 0.0f, 0.0f));
 	mOrientation = mOrientation * glm::rotate(IDENTITY_M4, m_v3Rotation.y, vector3(0.0f, 1.0f, 0.0f));
 	mOrientation = mOrientation * glm::rotate(IDENTITY_M4, m_v3Rotation.z, vector3(0.0f, 0.0f, 1.0f));
 
+	//if runtime exceeds duration of rotation, reset runtime and Steve
+	if (fRunTime > fDuration)
+	{
+		fRunTime = 0.0f;
+
+		m_v3Rotation = vector3(0.0f, 0.0f, 0.0f);
+		m_m4Orientation = IDENTITY_M4;
+	}
+
+	//start and end vector for rotation?
 	vector3 v3Start(0.0f, 0.0f, 0.0f);
 	vector3 v3End(0.0f, 90.0f, 0.0f);
+
+	//if runtime over 5, translate in opposite direction, and always rotate Steve
+	if (fRunTime <= 5)
+	{
+		v3Start = vector3(units, 0.0f, 0.0f);
+		v3End = vector3(units - 1, 0.0f, 0.0f);
+
+		units--;
+
+		m_v3Rotation += vector3(1.0f, 0.0f, 0.0f);
+		m_m4Orientation *= glm::rotate(IDENTITY_M4, 1.0f, REAXISZ);
+	}
+	else
+	{
+		v3Start = vector3(units, 0.0f, 0.0f);
+		v3End = vector3(units + 1, 0.0f, 0.0f);
+
+		units++;
+
+		m_v3Rotation += vector3(1.0f, 0.0f, 0.0f);
+		m_m4Orientation *= glm::rotate(IDENTITY_M4, 1.0f, REAXISZ);
+	}
+	
+	//calculate difference of movement based on runtime
 	static float fDifference = 0.0f;
 	fDifference += 0.1f;
-	fDifference = MapValue(static_cast<float>(fRunTime), 0.0f, 10.0f, 0.0f, 1.0f);
+	fDifference = MapValue(static_cast<float>(fRunTime), 0.0f, fDuration, 0.0f, 1.0f);
 
+	//lerp Steve
 	float fPosition = glm::lerp(v3Start, v3End, fDifference).y;
+	vector3 v3Position = glm::lerp(v3Start, v3End, fDifference);
 
+	//rotate Steve
 	mOrientation = glm::rotate(IDENTITY_M4, fPosition, vector3(0.0f, 1.0f, 0.0f));
-
-	m_pMeshMngr->SetModelMatrix(mOrientation, "Steve");
+	
+	//translate steve
+	mOrientation = glm::translate(v3Position);
+	
+	m_pMeshMngr->SetModelMatrix(m_m4Orientation, "Steve");
 	
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
@@ -68,8 +114,14 @@ void AppClass::Update(void)
 	//Print info on the screen
 	m_pMeshMngr->PrintLine(m_pSystem->GetAppName(), REYELLOW);
 
-	m_pMeshMngr->Print("FPS:");
+	m_pMeshMngr->Print("FPS: ");
 	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
+
+	m_pMeshMngr->Print("Seconds: ");
+	m_pMeshMngr->PrintLine(std::to_string(fRunTime));
+
+	m_pMeshMngr->Print("units: ");
+	m_pMeshMngr->PrintLine(std::to_string(units));
 }
 
 void AppClass::Display(void)
