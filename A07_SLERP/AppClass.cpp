@@ -1,7 +1,7 @@
 #include "AppClass.h"
 void AppClass::InitWindow(String a_sWindowName)
 {
-	super::InitWindow("SLERP - YOUR USER NAME GOES HERE"); // Window Name
+	super::InitWindow("SLERP - L.A. Stapleford"); // Window Name
 
 	//Setting the color to black
 	m_v4ClearColor = vector4(0.0f);
@@ -10,7 +10,7 @@ void AppClass::InitWindow(String a_sWindowName)
 void AppClass::InitVariables(void)
 {
 	//Setting the position in which the camera is looking and its interest point
-	m_pCameraMngr->SetPositionTargetAndView(vector3(12.12f, 28.52f, 11.34f), ZERO_V3, REAXISY);
+	m_pCameraMngr->SetPositionTargetAndView(vector3(0.0f, 0.0f, 50.0f), ZERO_V3, REAXISY);
 
 	//Setting the color to black
 	m_v4ClearColor = vector4(0.0f);
@@ -47,17 +47,94 @@ void AppClass::Update(void)
 	float fEarthHalfRevTime = 0.5f * m_fDay; // Move for Half a day
 	float fMoonHalfOrbTime = 14.0f * m_fDay; //Moon's orbit is 28 earth days, so half the time for half a route
 
+	//This matrices will hold the relative transformation of the Moon and the Earth
+	matrix4 distanceEarth = glm::translate(11.0f, 0.0f, 0.0f);
+	matrix4 distanceMoon = glm::translate(2.0f, 0.0f, 0.0f);
+
+	//set start and end rotations, 360 degrees
+	glm::quat Start = glm::quat(vector3(0.0f,0.0f,0.0f));
+	glm::quat End = glm::quat(vector3(360.0f, 0.0f, 0.0f));
+
+	//amount to rotate sun
+	glm::quat sunCurrentTime = glm::mix(Start, End, m_fDay);
+	matrix4 m4sunRotate = glm::mat4_cast(sunCurrentTime);
+
+	//rotate sun
+	matrix4 m_m4Sun = IDENTITY_M4;
+	m_m4Sun = m4sunRotate;
+
+	//scale sun
+	m_m4Sun = glm::scale(5.936f, 5.936f, 5.936f);
+
+	//amount to rotate Earth
+	glm::quat earthCurrentTime = glm::mix(Start, End, fEarthHalfRevTime);
+	matrix4 m4earthRotate = glm::mat4_cast(earthCurrentTime);
+
+	//scale earth
+	matrix4 m_m4Earth = IDENTITY_M4;
+	m_m4Earth = glm::scale(0.524f, 0.524f, 0.524f);
+
+	//rotate Earth at distance away from sun
+	m_m4Earth = m4earthRotate * distanceEarth;
+
+	//amount to rotate
+	glm::quat moonCurrentTime = glm::mix(Start, End, fMoonHalfOrbTime);
+	matrix4 m4moonRotate = glm::mat4_cast(moonCurrentTime);
+
+	//scale moon
+	matrix4 m_m4Moon = IDENTITY_M4;
+	m_m4Moon = glm::scale(0.524f, 0.524f, 0.524f) * glm::scale(0.27f, 0.27f, 0.27f);
+
+	//rotate moon at distance away from Earth
+	m_m4Moon = m4moonRotate * distanceEarth * distanceMoon;
+
 	//Setting the matrices
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "Sun");
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "Earth");
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "Moon");
+	m_pMeshMngr->SetModelMatrix(m_m4Sun, "Sun");
+	m_pMeshMngr->SetModelMatrix(m_m4Earth, "Earth");
+	m_pMeshMngr->SetModelMatrix(m_m4Moon, "Moon");
+
+	m_fDay += 0.001f;
 
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
 
-	static int nEarthOrbits = 0;
-	static int nEarthRevolutions = 0;
-	static int nMoonOrbits = 0;
+	//increment earth orbit count
+	static int nEarthOrbits;
+	if (fRunTime == 0)
+	{
+		nEarthOrbits = 0;
+	}
+	else
+	{
+		//placeholder until Earth orbits
+		nEarthOrbits++;
+	}
+
+	//increment earth revolutions count
+	static int nEarthRevolutions;
+	if (fRunTime == 0)
+	{
+		nEarthRevolutions = 0;
+	}
+	else
+	{
+		if (fmod(fEarthHalfRevTime, 0)) //wrong, needs to increment based on live revolutions based on m_fDay...
+		{
+			nEarthRevolutions++;
+		}
+	}
+
+	//increment moon orbit count
+	static int nMoonOrbits;
+	if (fRunTime == 0)
+	{
+		nMoonOrbits = 0;
+	}
+	else
+	{
+		//placeholder until Earth orbits
+		nMoonOrbits++;
+	}
 
 	//Indicate the FPS
 	int nFPS = m_pSystem->GetFPS();
