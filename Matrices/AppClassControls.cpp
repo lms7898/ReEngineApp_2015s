@@ -44,31 +44,23 @@ void AppClass::ProcessKeyboard(void)
 #pragma endregion
 
 #pragma region Model Positioning
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
-	{
-		if (!bModifier)
-			m_v3Rotation += vector3( 1.0f, 0.0f, 0.0f);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		m_v3Position += vector3(-0.1f, 0.0f, 0.0f);
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		m_v3Position += vector3( 0.1f, 0.0f, 0.0f);
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		if(!bModifier)
+			m_v3Position += vector3( 0.0f, 0.1f, 0.0f);
 		else
-			m_v3Rotation += vector3(-1.0f, 0.0f, 0.0f);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y))
-	{
+			m_v3Position += vector3( 0.0f, 0.0f,-0.1f);
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 		if (!bModifier)
-			m_v3Rotation += vector3( 0.0f, 1.0f, 0.0f);
+			m_v3Position += vector3( 0.0f,-0.1f, 0.0f);
 		else
-			m_v3Rotation += vector3( 0.0f,-1.0f, 0.0f);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
-	{
-		if (!bModifier)
-			m_v3Rotation += vector3(0.0f, 0.0f, 1.0f);
-		else
-			m_v3Rotation += vector3(0.0f, 0.0f,-1.0f);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-	{
-		m_v3Rotation = vector3(0.0f, 0.0f, 0.0f);
-	}
+			m_v3Position += vector3( 0.0f, 0.0f, 0.1f);
 #pragma endregion
 
 #pragma region Other Actions

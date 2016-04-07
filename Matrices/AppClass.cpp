@@ -1,23 +1,23 @@
 #include "AppClass.h"
 void AppClass::InitWindow(String a_sWindowName)
 {
-	super::InitWindow("LERP"); // Window Name
-
-	// Set the clear color based on Microsoft's CornflowerBlue (default in XNA)
-	//if this line is in Init Application it will depend on the .cfg file, if it
-	//is on the InitVariables it will always force it regardless of the .cfg
+	super::InitWindow("Sandbox"); // Window Name
 	m_v4ClearColor = vector4(0.4f, 0.6f, 0.9f, 0.0f);
 }
 
 void AppClass::InitVariables(void)
 {
-	m_v3Rotation = vector3(0.0f);
-
 	//Set the camera at a position other than the default
-	m_pCameraMngr->SetPositionTargetAndView(vector3(0.0f, 0.0f, 12.0f), vector3(0.0f, 0.0f, 0.0f), REAXISY);
-		
+	m_pCameraMngr->SetPositionTargetAndView(vector3(0.0f, 2.5f, 12.0f), vector3(0.0f, 2.5f, 11.0f), REAXISY);
+
 	//Load a model onto the Mesh manager
 	m_pMeshMngr->LoadModel("Minecraft\\Steve.obj", "Steve");
+}
+
+matrix4 CalculateMatrix(matrix4 m4Input)
+{
+	matrix4 m4Output = glm::inverse(m4Input);
+	return m4Input * m4Output;
 }
 
 void AppClass::Update(void)
@@ -35,28 +35,26 @@ void AppClass::Update(void)
 	//Call the arcball method
 	ArcBall();
 
+	//matrix4 m4Example = glm::translate(vector3(1.0, 0.0, 0.0));
+	//m4Example = CalculateMatrix(m4Example);
+
 	//Lets us know how much time has passed since the last call
-	double fTimeSpan = m_pSystem->LapClock();
+	double fDeltaTime = m_pSystem->LapClock();
 
 	//cumulative time
 	static double fRunTime = 0.0f;
-	fRunTime += fTimeSpan;
+	fRunTime += fDeltaTime;
 
-	matrix4 mOrientation = glm::rotate(IDENTITY_M4, m_v3Rotation.x, vector3(1.0f, 0.0f, 0.0f));
-	mOrientation = mOrientation * glm::rotate(IDENTITY_M4, m_v3Rotation.y, vector3(0.0f, 1.0f, 0.0f));
-	mOrientation = mOrientation * glm::rotate(IDENTITY_M4, m_v3Rotation.z, vector3(0.0f, 0.0f, 1.0f));
+	float fPercerntage;
 
-	vector3 v3Start(0.0f, 0.0f, 0.0f);
-	vector3 v3End(0.0f, 90.0f, 0.0f);
-	static float fDifference = 0.0f;
-	fDifference += 0.1f;
-	fDifference = MapValue(static_cast<float>(fRunTime), 0.0f, 10.0f, 0.0f, 1.0f);
+	fPercerntage = MapValue(fRunTime, 0.0, 50.0, 0.0, 1.0);
 
-	float fPosition = glm::lerp(v3Start, v3End, fDifference).y;
+	float fPosition = glm::lerp(-5.0f, 5.0f, fPercerntage);
 
-	mOrientation = glm::rotate(IDENTITY_M4, fPosition, vector3(0.0f, 1.0f, 0.0f));
+	matrix4 m4Example = glm::translate(vector3(fPosition, 0.0, 0.0));
 
-	m_pMeshMngr->SetModelMatrix(mOrientation, "Steve");
+	m_pMeshMngr->SetModelMatrix(m4Example, "Steve");
+
 	
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
