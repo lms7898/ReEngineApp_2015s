@@ -10,20 +10,35 @@ void AppClass::InitVariables(void)
 	m_pCameraMngr->SetPositionTargetAndView(vector3(0.0f, 0.0f, 15.0f), vector3(0.0f, 0.0f, 0.0f), REAXISY);
 
 	m_pMesh = new MyMesh();
+
+	//initializing the array
+	int m_nObjects = 100;
+
+	// we need 16 floats for each object (each matrix has 16 floats)
+	m_fMatrixArray = new  float[m_nObjects * 16];
+
+	//initializing the whole spaces to the position at the origin just to play it safe
+	for (uint n = 0; n < m_nObjects; n++)
+	{
+		const float* m4mvp = glm::value_ptr(
+			glm::translate(vector3(n * 2, 0, 0)));
+		memcpy(&m_fMatrixArray[n * 16], m4mvp, 16 * sizeof(float));
+	}
 	
 	//Creating the Mesh points
-	m_pMesh->AddVertexPosition(vector3(-1.0f, -1.0f, 0.0f));
-	m_pMesh->AddVertexColor(RERED);
-	m_pMesh->AddVertexPosition(vector3( 1.0f, -1.0f, 0.0f));
-	m_pMesh->AddVertexColor(RERED);
-	m_pMesh->AddVertexPosition(vector3(-1.0f,  1.0f, 0.0f));
-	m_pMesh->AddVertexColor(RERED);
-	m_pMesh->AddVertexPosition(vector3(-1.0f,  1.0f, 0.0f));
+	m_pMesh->AddVertexPosition(vector3(1.0f, 1.0f, 0.0f));
 	m_pMesh->AddVertexColor(REBLUE);
-	m_pMesh->AddVertexPosition(vector3(1.0f, -1.0f, 0.0f));
+	m_pMesh->AddVertexPosition(vector3( -1.0f, -1.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3(1.0f,  -1.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+
+	m_pMesh->AddVertexPosition(vector3(2.0f, 2.0f, 0.0f));
 	m_pMesh->AddVertexColor(REBLUE);
-	m_pMesh->AddVertexPosition(vector3( 1.0f, 1.0f, 0.0f));
-	m_pMesh->AddVertexColor(REBLUE);
+	m_pMesh->AddVertexPosition(vector3(1.0f, 0.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3(3.0f, 0.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
 
 	//Compiling the mesh
 	m_pMesh->CompileOpenGL3X();
