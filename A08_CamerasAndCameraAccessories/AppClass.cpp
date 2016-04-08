@@ -1,4 +1,5 @@
 #include "AppClass.h"
+#include "MyCamera.h"
 void AppClass::InitWindow(String a_sWindowName)
 {
 	super::InitWindow("A08_Camera"); // Window Name
@@ -13,18 +14,27 @@ void AppClass::InitVariables(void)
 {
 	//Reset the selection to -1, -1
 	m_selection = std::pair<int, int>(-1, -1);
-	//Set the camera position
-	m_pCameraMngr->SetPositionTargetAndView(
-		vector3(0.0f, 2.5f, 15.0f),//Camera position
-		vector3(0.0f, 2.5f, 0.0f),//What Im looking at
-		REAXISY);//What is up
-	//Load a model onto the Mesh manager
 
-	m_pMeshMngr->LoadModel("Lego\\Unikitty.bto", "Unikitty");
+	////Set the camera position
+	//m_pCameraMngr->SetPositionTargetAndView(
+	//	vector3(0.0f, 2.5f, 15.0f),//Camera position
+	//	vector3(0.0f, 2.5f, 0.0f),//What Im looking at
+	//	REAXISY);//What is up
+
+	//Load a model onto the Mesh manager
+	//m_pMeshMngr->LoadModel("Lego\\Unikitty.bto", "Unikitty");
 
 	//Generate the Cone
 	m_pCone = new PrimitiveClass();
 	m_pCone->GenerateCone(1.0f, 2.0f, 10, RERED);
+
+	//Generate the cube
+	m_pCube = new PrimitiveClass();
+	m_pCube->GenerateCube(1.0f, REPURPLE);
+
+	//make the camera
+	myCam = &MyCamera::getInstance();
+
 }
 
 void AppClass::Update(void)
@@ -35,15 +45,15 @@ void AppClass::Update(void)
 	//Update the mesh manager's time without updating for collision detection
 	m_pMeshMngr->Update();
 
-	//First person camera movement
-	if (m_bFPC == true)
-		CameraRotation();
+	////First person camera movement
+	//if (m_bFPC == true)
+	//	CameraRotation();
 
 	//Call the arcball method
-	ArcBall();
+	//ArcBall();
 	
 	//Set the model matrix for the first model to be the arcball
-	m_pMeshMngr->SetModelMatrix(ToMatrix4(m_qArcBall), 0);
+	//m_pMeshMngr->SetModelMatrix(ToMatrix4(m_qArcBall), 0);
 	
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
@@ -54,9 +64,6 @@ void AppClass::Update(void)
 	//printf("FPS: %d            \r", nFPS);//print the Frames per Second
 	//Print info on the screen
 	m_pMeshMngr->PrintLine(m_pSystem->GetAppName(), REYELLOW);
-
-	m_pMeshMngr->Print("Selection: ");
-	m_pMeshMngr->PrintLine(m_pMeshMngr->GetInstanceGroupName(m_selection.first, m_selection.second), REYELLOW);
 	
 	m_pMeshMngr->Print("FPS:");
 	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
@@ -84,6 +91,15 @@ void AppClass::Display(void)
 		break;
 	}
 	
+	//Render the cone in perspective mode, 
+	matrix4 m4Proj = myCam->GetProjection(false);
+	matrix4 m4View = myCam->GetViewMatrix();
+
+	m_pCone->Render(m4Proj, m4View, IDENTITY_M4);
+
+	//Render the cube
+	m_pCube->Render(m4Proj, m4View, IDENTITY_M4);
+
 	m_pMeshMngr->Render(); //renders the render list
 
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
@@ -91,5 +107,10 @@ void AppClass::Display(void)
 
 void AppClass::Release(void)
 {
+	delete m_pCone;
+	delete m_pCube;
+
+	// myCam->release;
+
 	super::Release(); //release the memory of the inherited fields
 }

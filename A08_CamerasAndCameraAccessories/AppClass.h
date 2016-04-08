@@ -7,6 +7,7 @@ Date: 2015/09 (Last Modified on: 15/11)
 
 #include "RE\ReEngAppClass.h"
 #include <SFML\Graphics.hpp>
+#include "MyCamera.h"
 
 using namespace ReEng; //Using ReEng namespace to use all the classes in the dll
 
@@ -15,6 +16,10 @@ class AppClass : public ReEngAppClass
 public:
 	typedef ReEngAppClass super;
 	PrimitiveClass* m_pCone = nullptr;
+	PrimitiveClass* m_pCube = nullptr;
+	vector3 m_v3Target = vector3(0.0f, 0.0f, 0.0f);
+
+	MyCamera* myCam; // a handle for the camera
 
 	/*
 	USAGE: Constructor

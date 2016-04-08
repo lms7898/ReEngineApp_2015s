@@ -1,4 +1,5 @@
 #include "AppClass.h"
+#include "MyCamera.h"
 void AppClass::ProcessKeyboard(void)
 {
 	bool bModifier = false;
@@ -25,23 +26,30 @@ void AppClass::ProcessKeyboard(void)
 	if(bModifier)
 		fSpeed *= 10.0f;
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		m_pCameraMngr->MoveForward(fSpeed);
+		myCam->MoveForward(fSpeed);
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		m_pCameraMngr->MoveForward(-fSpeed);
+		myCam->MoveForward(-fSpeed);
 	
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		m_pCameraMngr->MoveSideways(-fSpeed);
+		myCam->MoveSideways(-fSpeed);
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		m_pCameraMngr->MoveSideways(fSpeed);
+		myCam->MoveSideways(fSpeed);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-		m_pCameraMngr->MoveVertical(-fSpeed);
+		myCam->MoveVertical(fSpeed);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
-		m_pCameraMngr->MoveVertical(fSpeed);
+		myCam->MoveVertical(-fSpeed);
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+		myCam->ChangeRoll(-fSpeed * 10.0f);
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
+		myCam->ChangeRoll(fSpeed * 10.0f);
 #pragma endregion
+
 
 #pragma region Other Actions
 	ON_KEY_PRESS_RELEASE(Escape, NULL, PostMessage(m_pWindow->GetHandler(), WM_QUIT, NULL, NULL));
@@ -53,10 +61,13 @@ void AppClass::ProcessKeyboard(void)
 	ON_KEY_PRESS_RELEASE(F, bFPSControll = !bFPSControll, m_pCameraMngr->SetFPS(bFPSControll));
 #pragma endregion
 }
+
+
 void AppClass::ProcessMouse(void)
 {
 	m_bArcBall = false;
 	m_bFPC = false;
+	float fSpeed = 0.01f;
 #pragma region ON_MOUSE_PRESS_RELEASE
 	static bool	bLastLeft = false, bLastMiddle = false, bLastRight = false;
 #define ON_MOUSE_PRESS_RELEASE(key, pressed_action, released_action){  \
@@ -94,4 +105,50 @@ void AppClass::ProcessMouse(void)
 	
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 		m_bFPC = true;
+
+	if (m_bFPC) {
+		//the following code is taken from ReEngAppClass.h CameraRotation ln 351
+		UINT	MouseX, MouseY;		// Coordinates for the mouse
+		UINT	CenterX, CenterY;	// Coordinates for the center of the screen.
+
+									//Initialize the position of the pointer to the middle of the screen
+		CenterX = m_pSystem->GetWindowX() + m_pSystem->GetWindowWidth() / 2;
+		CenterY = m_pSystem->GetWindowY() + m_pSystem->GetWindowHeight() / 2;
+
+		//Calculate the position of the mouse and store it
+		POINT pt;
+		GetCursorPos(&pt);
+		MouseX = pt.x;
+		MouseY = pt.y;
+
+		//Calculate the difference in view with the angle
+		float fAngleX = 0.0f;
+		float fAngleY = 0.0f;
+		float fDeltaMouse = 0.0f;
+		if (MouseX < CenterX)
+		{
+			fDeltaMouse = static_cast<float>(CenterX - MouseX);
+			fAngleY += fDeltaMouse * fSpeed;
+		}
+		else if (MouseX > CenterX)
+		{
+			fDeltaMouse = static_cast<float>(MouseX - CenterX);
+			fAngleY -= fDeltaMouse * fSpeed;
+		}
+
+		if (MouseY < CenterY)
+		{
+			fDeltaMouse = static_cast<float>(CenterY - MouseY);
+			fAngleX -= fDeltaMouse * fSpeed;
+		}
+		else if (MouseY > CenterY)
+		{
+			fDeltaMouse = static_cast<float>(MouseY - CenterY);
+			fAngleX += fDeltaMouse * fSpeed;
+		}
+		//Change the Yaw and the Pitch of the camera
+		myCam->ChangeYaw(-fAngleY * 3.0f);
+		myCam->ChangePitch(fAngleX * 3.0f);
+		SetCursorPos(CenterX, CenterY);//Position the mouse in the center
+	}
 }
