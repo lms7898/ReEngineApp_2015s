@@ -46,11 +46,15 @@ void AppClass::Update(void)
 
 void AppClass::Display(void)
 {
-	//Clear the window
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	//clear the screen
+	ClearScreen();
+	
 	//Render the grid
+<<<<<<< HEAD
 	//m_pMeshMngr->AddGridToQueue(1.0f, REAXIS::XY);
+=======
+	m_pMeshMngr->AddGridToRenderList(1.0f, REAXIS::XY);
+>>>>>>> refs/remotes/labigm/master
 
 	//Render the cone
 	m_pCone->Render(m_m4Projection, m_m4View, IDENTITY_M4);
@@ -58,11 +62,9 @@ void AppClass::Display(void)
 	//Render the cylinder
 	m_pCylinder->Render(m_m4Projection, m_m4View, glm::translate(IDENTITY_M4, REAXISZ * -3.0f));
 
-	//Render the rest of the meshes
-	m_pMeshMngr->Render();
-
-	//Swaps the OpenGL buffers
-	m_pGLSystem->GLSwapBuffers();
+	m_pMeshMngr->Render(); //renders the render list
+	m_pMeshMngr->ResetRenderList(); //Reset the Render list after render
+	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
 }
 
 void AppClass::Release(void)

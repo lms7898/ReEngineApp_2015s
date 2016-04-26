@@ -47,6 +47,7 @@ void AppClass::Display(void)
 {
 	//clear the screen
 	ClearScreen();
+<<<<<<< HEAD
 
 	//Render the grid based on the camera's mode:
 	switch (m_pCameraMngr->GetCameraMode())
@@ -69,6 +70,15 @@ void AppClass::Display(void)
 	
 	m_pMeshMngr->Render(); //renders the render list
 
+=======
+	
+	m_pPrimitive->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), ToMatrix4(m_qArcBall));
+	
+	//Render the grid based on the camera's mode:
+	m_pMeshMngr->AddGridToRenderListBasedOnCamera(m_pCameraMngr->GetCameraMode());
+	m_pMeshMngr->Render(); //renders the render list
+	m_pMeshMngr->ResetRenderList(); //Reset the Render list after render
+>>>>>>> refs/remotes/labigm/master
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
 }
 

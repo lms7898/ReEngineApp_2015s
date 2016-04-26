@@ -3,6 +3,10 @@ void AppClass::InitWindow(String a_sWindowName)
 {
 	//Using Base InitWindow method
 	super::InitWindow("Instance Rendering");
+<<<<<<< HEAD
+=======
+	m_v4ClearColor = vector4(REBLACK, 1.0f);
+>>>>>>> refs/remotes/labigm/master
 }
 
 void AppClass::InitVariables(void)
@@ -10,6 +14,7 @@ void AppClass::InitVariables(void)
 	m_pCameraMngr->SetPositionTargetAndView(vector3(0.0f, 0.0f, 15.0f), vector3(0.0f, 0.0f, 0.0f), REAXISY);
 
 	m_pMesh = new MyMesh();
+<<<<<<< HEAD
 
 	//initializing the array
 	int m_nObjects = 100;
@@ -39,6 +44,22 @@ void AppClass::InitVariables(void)
 	m_pMesh->AddVertexColor(RERED);
 	m_pMesh->AddVertexPosition(vector3(3.0f, 0.0f, 0.0f));
 	m_pMesh->AddVertexColor(RERED);
+=======
+	
+	//Creating the Mesh points
+	m_pMesh->AddVertexPosition(vector3(-1.0f, -1.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3( 1.0f, -1.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3(-1.0f,  1.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3(-1.0f,  1.0f, 0.0f));
+	m_pMesh->AddVertexColor(REBLUE);
+	m_pMesh->AddVertexPosition(vector3(1.0f, -1.0f, 0.0f));
+	m_pMesh->AddVertexColor(REBLUE);
+	m_pMesh->AddVertexPosition(vector3( 1.0f, 1.0f, 0.0f));
+	m_pMesh->AddVertexColor(REBLUE);
+>>>>>>> refs/remotes/labigm/master
 
 	//Compiling the mesh
 	m_pMesh->CompileOpenGL3X();
@@ -72,16 +93,27 @@ void AppClass::Update(void)
 
 void AppClass::Display(void)
 {
+<<<<<<< HEAD
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the window
+=======
+	ClearScreen();
+>>>>>>> refs/remotes/labigm/master
 	
 	//Matrices from the camera
 	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
 	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
 
 	m_pMesh->Render(m4Projection, m4View, IDENTITY_M4);//Rendering nObjects
+<<<<<<< HEAD
 
 	m_pMeshMngr->Render();
 
+=======
+													   //clear the screen
+	
+	m_pMeshMngr->Render(); //renders the render list
+	m_pMeshMngr->ResetRenderList(); //Reset the Render list after render
+>>>>>>> refs/remotes/labigm/master
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
 }
 

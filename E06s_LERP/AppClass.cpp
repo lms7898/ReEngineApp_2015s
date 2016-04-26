@@ -1,6 +1,7 @@
 #include "AppClass.h"
 void AppClass::InitWindow(String a_sWindowName)
 {
+<<<<<<< HEAD
 	super::InitWindow("E06 - LERP"); // Window Name
 	m_v4ClearColor = vector4(0.4f, 0.6f, 0.9f, 0.0f);
 }
@@ -35,6 +36,38 @@ void AppClass::InitVariables(void)
 		m_pMatrix[i] = glm::translate(v3Current);
 	}
 }
+=======
+	super::InitWindow("Sandbox"); // Window Name
+
+	// Set the clear color based on Microsoft's CornflowerBlue (default in XNA)
+	//if this line is in Init Application it will depend on the .cfg file, if it
+	//is on the InitVariables it will always force it regardless of the .cfg
+	m_v4ClearColor = vector4(0.4f, 0.6f, 0.9f, 0.0f);
+}
+
+void AppClass::InitVariables(void)
+{
+	m_pCameraMngr->SetPosition(vector3(0.0f, 0.0f, 35.0f));
+
+	srand(static_cast<uint>(time(NULL)));
+	m_nObjects = rand() % 23 + 5;
+
+	vector3 v3Start = vector3(-m_nObjects, 0.0f, 0.0f);
+	vector3 v3End = vector3(m_nObjects, 0.0f, 0.0f);
+
+	m_pSphere = new PrimitiveClass[m_nObjects];
+	m_pMatrix = new matrix4[m_nObjects];
+
+
+	for (int nSphere = 0; nSphere < m_nObjects; nSphere++)
+	{
+		float fPercent = MapValue(static_cast<float>(nSphere), 0.0f, static_cast<float>(m_nObjects), 0.0f, 1.0f);
+		m_pSphere[nSphere].GenerateSphere(1.0f, 5, vector3(fPercent, 0.0f, 0.0f));
+		m_pMatrix[nSphere] = glm::translate(glm::lerp(v3Start, v3End, fPercent));
+	}
+}
+
+>>>>>>> refs/remotes/labigm/master
 void AppClass::Update(void)
 {
 	//Update the system's time
@@ -49,7 +82,10 @@ void AppClass::Update(void)
 
 	//Call the arcball method
 	ArcBall();
+<<<<<<< HEAD
 	m_pMeshMngr->SetModelMatrix(glm::translate(m_v3Position) * ToMatrix4(m_qArcBall), 0);
+=======
+>>>>>>> refs/remotes/labigm/master
 	
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
@@ -67,10 +103,15 @@ void AppClass::Update(void)
 	m_pMeshMngr->Print("FPS:");
 	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/labigm/master
 void AppClass::Display(void)
 {
 	//clear the screen
 	ClearScreen();
+<<<<<<< HEAD
 
 	//Render the grid based on the camera's mode:
 	switch (m_pCameraMngr->GetCameraMode())
@@ -99,6 +140,21 @@ void AppClass::Display(void)
 
 	m_pMeshMngr->Render(); //renders the render list
 
+=======
+	
+	//Matrices from the camera
+	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
+	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
+
+	for (int nSphere = 0; nSphere < m_nObjects; nSphere++)
+	{
+		m_pSphere[nSphere].Render(m4Projection, m4View, m_pMatrix[nSphere]);
+	}
+	//Render the grid based on the camera's mode:
+	m_pMeshMngr->AddGridToRenderListBasedOnCamera(m_pCameraMngr->GetCameraMode());
+	m_pMeshMngr->Render(); //renders the render list
+	m_pMeshMngr->ResetRenderList(); //Reset the Render list after render
+>>>>>>> refs/remotes/labigm/master
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
 }
 
@@ -109,11 +165,18 @@ void AppClass::Release(void)
 		delete[] m_pSphere;
 		m_pSphere = nullptr;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> refs/remotes/labigm/master
 	if (m_pMatrix != nullptr)
 	{
 		delete[] m_pMatrix;
 		m_pMatrix = nullptr;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/labigm/master
 	super::Release(); //release the memory of the inherited fields
 }

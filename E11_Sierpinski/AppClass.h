@@ -10,6 +10,21 @@ Date: 2015/08
 #include <SFML\Graphics.hpp>
 #include "MyMesh.h"
 
+<<<<<<< HEAD
+=======
+////Initializing the array
+//m_nObjects = 100;
+//
+//// We need 16 floats for each object (each matrix has 16 floats)
+//m_fMatrixArray = new float[m_nObjects * 16];
+////Initializing the whole spaces to the position at the origin just to play it safe
+//const float* m4MVP = glm::value_ptr(IDENTITY_M4);
+//for (uint n = 0; n < m_nObjects; n++)
+//{
+//	memcpy(&m_fMatrixArray[n * 16], m4MVP, 16 * sizeof(float));
+//}
+
+>>>>>>> refs/remotes/labigm/master
 using namespace ReEng; //Using ReEng namespace to use all the classes in the dll
 
 class AppClass : public ReEngAppClass

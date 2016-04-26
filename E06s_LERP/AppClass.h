@@ -12,10 +12,17 @@ using namespace ReEng; //Using ReEng namespace to use all the classes in the dll
 
 class AppClass : public ReEngAppClass
 {
+<<<<<<< HEAD
 	vector3 m_v3Position = vector3(0.0f);
 
 	int m_nObjects = 0;
 	PrimitiveClass* m_pSphere = nullptr;
+=======
+	int m_nObjects;
+
+	PrimitiveClass* m_pSphere = nullptr;
+
+>>>>>>> refs/remotes/labigm/master
 	matrix4* m_pMatrix = nullptr;
 public:
 	typedef ReEngAppClass super;
