@@ -112,7 +112,11 @@ void AppClass::Display(void)
 													   //clear the screen
 	
 	m_pMeshMngr->Render(); //renders the render list
+<<<<<<< HEAD
 	m_pMeshMngr->ResetRenderList(); //Reset the Render list after render
+>>>>>>> refs/remotes/labigm/master
+=======
+	m_pMeshMngr->ClearRenderList(); //Reset the Render list after render
 >>>>>>> refs/remotes/labigm/master
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
 }
